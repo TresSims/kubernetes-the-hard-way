@@ -15,15 +15,15 @@ When generating kubeconfig files for Kubelets the client certificate matching th
 Generate a kubeconfig file for the `node-0` and `node-1` worker nodes:
 
 ```bash
-for host in node-0 node-1; do
+for host in kube-node-01 kube-node-02; do
   kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
+    --certificate-authority=pki/ca/ca.crt \
     --embed-certs=true \
-    --server=https://server.kubernetes.local:6443 \
+    --server=https://kube-cp-01.k8s.local:6443 \
     --kubeconfig=${host}.kubeconfig
 
   kubectl config set-credentials system:node:${host} \
-    --client-certificate=${host}.crt \
+    --client-certificate=pki/${host}/${host}.crt \
     --client-key=${host}.key \
     --embed-certs=true \
     --kubeconfig=${host}.kubeconfig
