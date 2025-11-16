@@ -1,3 +1,11 @@
+locals {
+  worker_count = 2
+  ssh-keys     = <<EOF
+      tsims:${data.vault_kv_secret_v2.laptop_ssh.data.public-key}
+      tsims:${data.vault_kv_secret_v2.desktop_ssh.data.public-key}
+  EOF
+}
+
 resource "google_service_account" "sa-kube-cp-01" {
   account_id = "sa-kube-cp-01"
 }
@@ -22,7 +30,7 @@ resource "google_compute_instance" "kube-cp-01" {
   }
 
   metadata = {
-    ssh-keys = "tsims:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = local.ssh-keys
   }
 
   service_account {
@@ -31,9 +39,6 @@ resource "google_compute_instance" "kube-cp-01" {
   }
 }
 
-locals {
-  worker_count = 2
-}
 
 resource "google_service_account" "sa-kube-node" {
   count      = local.worker_count
@@ -61,7 +66,7 @@ resource "google_compute_instance" "kube-node" {
   }
 
   metadata = {
-    ssh-keys = "tsims:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = local.ssh-keys
   }
 
   service_account {
