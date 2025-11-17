@@ -50,4 +50,5 @@ service-account-csr.json
 *.swp
 .idea/
 cluster/
+cluster
 downloads/
